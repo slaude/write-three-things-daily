@@ -1,24 +1,25 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [first, setFirst] = useState("");
+  const [second, setSecond] = useState("");
+  const [third, setThird] = useState("");
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1 className="text-3xl m-4 font-bold text-center">Write exactly three things a day</h1>
+      <div className="container mx-auto flex flex-col items-center">
+        <div className="">
+          <textarea className="border-2 p-2" value={first} onChange={(e) => setFirst(e.target.value)} />
+        </div>
+        <div>
+          <textarea className="border-2 p-2" value={second} onChange={(e) => setSecond(e.target.value)} />
+        </div>
+        <div>
+          <textarea className="border-2 p-2" value={third} onChange={(e) => setThird(e.target.value)} />
+        </div>
+      </div>
     </div>
   );
 }
