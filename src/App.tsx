@@ -1,29 +1,49 @@
 import classNames from 'classnames';
-import { useState, useCallback, FormEventHandler } from 'react';
+import { useState, useCallback, FormEventHandler, useEffect } from 'react';
 import './App.css';
 
 import { Input } from "./components/Input";
+import { useThings } from './services/getThings';
+import { persistThings } from './services/persistThings';
 
 const YOU_MUST_TYPE_THIS_MANY_CHARACTERS = 3;
 
 function App() {
+  const [today] = useState(() => {
+    return (new Date()).toISOString().split("T")[0];
+  })
+  const { data } = useThings();
+
+  useEffect(() => {
+    if (data) {
+      const todaysThings = data.find(({ date }) => date === today);
+
+      if (todaysThings) {
+        setEditState("confirmed");
+        setFirst(todaysThings.things[0]);
+        setSecond(todaysThings.things[1]);
+        setThird(todaysThings.things[2]);
+      }
+    }
+  }, [today, data]);
+
   const [first, setFirst] = useState("");
   const [second, setSecond] = useState("");
   const [third, setThird] = useState("");
 
-  const [editState, setEditState] = useState<"editing" | "confirming" | "confirmed">("editing");
+  const [editState, setEditState] = useState<"editing" | "confirming" | "saving" | "confirmed">("editing");
 
   const disableSecond = first.length < YOU_MUST_TYPE_THIS_MANY_CHARACTERS;
   const disableThird = disableSecond || second.length < YOU_MUST_TYPE_THIS_MANY_CHARACTERS;
   const disableSubmit = disableSecond || disableThird || third.length < YOU_MUST_TYPE_THIS_MANY_CHARACTERS;
 
-  const handleSubmit = useCallback<FormEventHandler<HTMLFormElement>>((e) => {
-    setEditState("confirmed");
-    const [firstValue, secondValue, thirdValue] = Array.from(e.target as any).map((n: any) => n.value);
-
-    console.log("committed", firstValue, secondValue, thirdValue);
-
+  const handleSubmit = useCallback<FormEventHandler<HTMLFormElement>>(async (e) => {
     e.preventDefault();
+    setEditState("saving");
+    const [firstValue, secondValue, thirdValue] = Array.from(e.target as any).map((n: any) => n.value);
+    const { success } = await persistThings([firstValue, secondValue, thirdValue]);
+
+    setEditState(success ? "confirmed"  : "confirming");
   }, []);
 
   return (
