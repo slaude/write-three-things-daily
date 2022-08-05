@@ -1,5 +1,8 @@
 import classNames from 'classnames';
 import { useState, useCallback, FormEventHandler, useEffect, useMemo } from 'react';
+
+import { useTranslation, Trans } from "react-i18next";
+
 import './App.css';
 
 import { Input } from "./components/Input";
@@ -14,6 +17,8 @@ const YOU_MUST_TYPE_THIS_MANY_CHARACTERS = 3;
 type EditState = "editing" | "confirming" | "saving" | "confirmed" | "viewing";
 
 function App() {
+  const { t } = useTranslation();
+
   const [today] = useState(() => {
     return (new Date()).toISOString().split("T")[0];
   })
@@ -60,25 +65,25 @@ function App() {
       {(editState === "editing" || editState === "confirming" || editState === "saving") && (
         <>
           <h1 className="text-3xl m-4 font-bold text-center">
-            Write exactly three things a day
+            {t("app-title")}
           </h1>
           <form className="container mx-auto flex flex-col items-center" onSubmit={handleSubmit}>
             <Input
-              placeholder="Write your first thing"
+              placeholder={t("first-placeholder")}
               name="first"
               value={first}
               disabled={editState !== "editing"}
               onChange={setFirst}
             />
             <Input
-              placeholder={disableSecond ? "" : "Next, write your second thing"}
+              placeholder={disableSecond ? "" : t("second-placeholder")}
               name="second"
               value={second}
               disabled={disableSecond || editState !== "editing"}
               onChange={setSecond}
             />
             <Input
-              placeholder={disableThird ? "" : "Finally, write your third thing"}
+              placeholder={disableThird ? "" : t("third-placeholder")}
               name="third"
               value={third}
               disabled={disableThird || editState !== "editing"}
@@ -98,14 +103,13 @@ function App() {
                       }
                     )
                   }
-                  aria-label="Commit your writings"
                   disabled={disableSubmit}
                   onClick={(e) => {
                     setEditState("confirming")
                     e.preventDefault();
                   }}
                 >
-                  {disableSubmit ? "You're not quite there": "That's it for today"}
+                  {disableSubmit ? t("submit-disabled"): t("submit-enabled")}
                 </button>
               )}
               {editState === "confirming" && (
@@ -117,13 +121,13 @@ function App() {
                       e.preventDefault()
                     }}
                   >
-                    Make some edits
+                    {t("edit-things")}
                   </button>
                   <button
                     className="flex-1 ml-1 text-center rounded font-bold p-2 text-white bg-green-600"
                     type="submit"
                   >
-                    Submit my three things
+                    {t("submit-things")}
                   </button>
                 </>
               )}
@@ -134,7 +138,7 @@ function App() {
       {editState === "confirmed" && (
         <>
           <h1 className="text-3xl m-4 font-bold text-center">
-            The three things you wrote today:
+            {t("app-title-confirmed-today")}
           </h1>
           <ReadThings first={first} second={second} third={third} />
           {hasPastData && (
@@ -143,7 +147,7 @@ function App() {
                 className="w-full rounded font-bold p-2 text-white bg-cyan-800"
                 onClick={() => setEditState("viewing")}
               >
-                See what you've written in the past
+                {t("view-past-things")}
               </button>
             </div>
           )}
@@ -162,6 +166,8 @@ interface PreviousThingsProps {
 }
 
 const PreviousThings = ({ today, data }: PreviousThingsProps): React.ReactElement => {
+  const { t } = useTranslation();
+
   const [offset, setOffset] = useState(() => {
     const todayOffset = data.findIndex((datum) => datum.date === today);
     
@@ -173,11 +179,15 @@ const PreviousThings = ({ today, data }: PreviousThingsProps): React.ReactElemen
   
   const disablePrevious = offset === 0;
   const disableNext = offset >= data.length -1;
+
+  const { date } = datum;
   
   return (
     <>
       <h1 className="text-3xl m-4 font-bold text-center">
-        Here's what you wrote on {datum.date}:
+        <Trans i18nKey="app-title-for-date">
+          Here's what you wrote on {{date}}
+        </Trans>
       </h1>
       <ReadThings first={datum.things[0]} second={datum.things[1]} third={datum.things[2]} />
       <div className="mx-auto container flex justify-between">
@@ -191,7 +201,7 @@ const PreviousThings = ({ today, data }: PreviousThingsProps): React.ReactElemen
             setOffset(current => current - 1)
           }}
         >
-          See previous things
+          {t("previous-things")}
         </button>
         <button
           className={classNames('text-center ml-1 w-full rounded font-bold p-2 text-white bg-cyan-800', {
@@ -203,7 +213,7 @@ const PreviousThings = ({ today, data }: PreviousThingsProps): React.ReactElemen
             setOffset(current => current + 1)
           }}
         >
-          See next things
+          {t("next-things")}
         </button>
       </div>
     </>
