@@ -43,10 +43,18 @@ export const getThings = (): Promise<GetResult> => {
   });
 }
 
+/**
+ * hook to fetch the things you've written in the vein of react-query, minus the janky
+ * invalidation imperative function.
+ */
 export const useThings = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<WrittenRecord[] | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  /**
+   * @note really can't think of a simpler way to do this after submitting new data
+   */
+  const [invalidationToken, setInvalidationToken] = useState(0);
 
   useEffect(() => {
     setIsLoading(true);
@@ -56,11 +64,12 @@ export const useThings = () => {
       setData(get.data);
       setError(get.error);
     });
-  }, [setIsLoading, setData, setError]);
+  }, [invalidationToken, setIsLoading, setData, setError]);
 
   return {
     isLoading,
     error,
     data,
+    invalidate: () => setInvalidationToken(t => t+1),
   };
 };

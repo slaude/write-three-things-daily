@@ -17,7 +17,7 @@ function App() {
   const [today] = useState(() => {
     return (new Date()).toISOString().split("T")[0];
   })
-  const { data } = useThings();
+  const { data, invalidate } = useThings();
 
   useEffect(() => {
     if (data) {
@@ -50,9 +50,10 @@ function App() {
     setEditState("saving");
     const [firstValue, secondValue, thirdValue] = Array.from(e.target as any).map((n: any) => n.value);
     const { success } = await persistThings([firstValue, secondValue, thirdValue]);
+    invalidate();
 
     setEditState(success ? "confirmed"  : "confirming");
-  }, []);
+  }, [invalidate]);
 
   return (
     <div className="App max-w-screen-lg mx-auto">
