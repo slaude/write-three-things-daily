@@ -140,6 +140,9 @@ function App() {
           <h1 className="text-3xl m-4 font-bold text-center">
             {t("app-title-confirmed-today")}
           </h1>
+          <div className="text-slate-500 text-center">
+            <CountdownTimer />
+          </div>
           <ReadThings first={first} second={second} third={third} />
           {hasPastData && (
             <div className="mx-auto container">
@@ -159,6 +162,51 @@ function App() {
     </div>
   );
 }
+
+const constructTimeRemaining = (remaining: number): string => {
+  const parts: string[] = [];
+
+  let hourPart;
+
+  // eslint-disable-next-line no-cond-assign
+  if (hourPart = Math.floor(remaining / (60 * 60))) {
+    parts.push(""+hourPart);
+  }
+  parts.push((""+Math.floor(remaining / 60) % 60).padStart(2, "0"));
+  parts.push((""+remaining % 60).padStart(2, "0"));
+
+  return parts.join(":");
+};
+
+const CountdownTimer = () => {
+  const [timeRemaining, setTimeRemaining] = useState("...");
+
+  useEffect(() => {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    tomorrow.setMilliseconds(0);
+    tomorrow.setSeconds(0);
+    tomorrow.setMinutes(0);
+    tomorrow.setHours(0);
+
+    const interval = setInterval(() => {
+      const difference = tomorrow.valueOf() - Date.now();
+      const seconds = Math.floor(difference / 1000);
+
+      setTimeRemaining(constructTimeRemaining(seconds));
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    }
+  }, [])
+
+  return (
+    <Trans i18nKey="countdown-to-next-day">
+      (You can write your next three things in {{timeRemaining}})
+    </Trans>
+  );
+};
 
 interface PreviousThingsProps {
   today: string;

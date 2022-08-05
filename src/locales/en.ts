@@ -12,6 +12,7 @@ export const defaultLocale = {
   "app-title-for-date": "Here's what you wrote on {{date}}",
   "previous-things": "See previous things",
   "next-things": "See next things",
+  "countdown-to-next-day": "(You can write your next three things in {{timeRemaining}})",
 } as const;
 
 export type I18nStrings = keyof typeof defaultLocale;
