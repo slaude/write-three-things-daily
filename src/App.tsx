@@ -52,33 +52,27 @@ function App() {
         {editState === "confirmed" ? "The three things you wrote today:" : "Write exactly three things a day"}
       </h1>
       <form className="container mx-auto flex flex-col items-center" onSubmit={handleSubmit}>
-        <div className="w-full">
-          <Input
-            placeholder="Write your first thing"
-            name="first"
-            value={first}
-            disabled={editState !== "editing"}
-            onChange={setFirst}
-          />
-        </div>
-        <div className="w-full">
-          <Input
-            placeholder={disableSecond ? "" : "Next, write your second thing"}
-            name="second"
-            value={second}
-            disabled={disableSecond || editState !== "editing"}
-            onChange={setSecond}
-          />
-        </div>
-        <div className="w-full">
-          <Input
-            placeholder={disableThird ? "" : "Finally, write your third thing"}
-            name="third"
-            value={third}
-            disabled={disableThird || editState !== "editing"}
-            onChange={setThird}
-          />
-        </div>
+        <Input
+          placeholder="Write your first thing"
+          name="first"
+          value={first}
+          disabled={editState !== "editing"}
+          onChange={setFirst}
+        />
+        <Input
+          placeholder={disableSecond ? "" : "Next, write your second thing"}
+          name="second"
+          value={second}
+          disabled={disableSecond || editState !== "editing"}
+          onChange={setSecond}
+        />
+        <Input
+          placeholder={disableThird ? "" : "Finally, write your third thing"}
+          name="third"
+          value={third}
+          disabled={disableThird || editState !== "editing"}
+          onChange={setThird}
+        />
         <div className="w-full flex justify-between">
           {editState === "editing" && (
             <button
