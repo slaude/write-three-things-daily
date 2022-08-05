@@ -56,7 +56,7 @@ function App() {
   }, [invalidate]);
 
   return (
-    <div className="App max-w-screen-lg mx-auto">
+    <div className="App max-w-screen-lg mx-auto px-3">
       {(editState === "editing" || editState === "confirming" || editState === "saving") && (
         <>
           <h1 className="text-3xl m-4 font-bold text-center">
@@ -138,12 +138,14 @@ function App() {
           </h1>
           <ReadThings first={first} second={second} third={third} />
           {hasPastData && (
-            <button
-              className="text-center w-full rounded font-bold p-2 text-white bg-cyan-800"
-              onClick={() => setEditState("viewing")}
-            >
-              See what you've written in the past
-            </button>
+            <div className="mx-auto container">
+              <button
+                className="w-full rounded font-bold p-2 text-white bg-cyan-800"
+                onClick={() => setEditState("viewing")}
+              >
+                See what you've written in the past
+              </button>
+            </div>
           )}
         </>
       )}
@@ -178,7 +180,7 @@ const PreviousThings = ({ today, data }: PreviousThingsProps): React.ReactElemen
         Here's what you wrote on {datum.date}:
       </h1>
       <ReadThings first={datum.things[0]} second={datum.things[1]} third={datum.things[2]} />
-      <div className="w-full flex justify-between">
+      <div className="mx-auto container flex justify-between">
         <button
           className={classNames('text-center mr-1 w-full rounded font-bold p-2 text-white bg-cyan-800', {
             "text-slate-500": disablePrevious,
